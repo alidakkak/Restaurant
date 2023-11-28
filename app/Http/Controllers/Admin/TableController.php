@@ -24,13 +24,13 @@ class TableController extends Controller
      */
     public function index()
     {
-       return Product::get();
+       return Table::get();
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(ProductRequest $request)
+    public function store(Request $request)
     {
         $details=$request->validated();
        $isExist = Table::where('table_num',$request->table_num)->exists();
@@ -41,11 +41,11 @@ class TableController extends Controller
            {
                $name = $request->name ?? $request->name_ar;
                $file = $request->image;
-               $path = 'asset/product';
+               $path = 'asset/table';
                $details['image'] = $this->uploade_image($name, $path, $file);
            }
-           $product = Product::create($details);
-           return $this->ReturnCreate("Product",$product);
+           $table = Table::create($details);
+           return $this->ReturnCreate("Table",$table);
        }
 
     }
@@ -53,23 +53,23 @@ class TableController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateProductRequest $request, string $id)
+    public function update(Request $request, string $id)
     {
-        $product=Product::find($id);
-            if (!$product){
-                return response()->json(['message' => 'Product not found'], 404)->setStatusCode(404);
+        $table=Table::find($id);
+            if (!$table){
+                return response()->json(['message' => 'Table not found'], 404)->setStatusCode(404);
             }
          $details=$request->validated();
           if ($request->image)
           {
-            $this->deleteFile(public_path($product->image));
-            $name = $request->name ?? $product->name;
+            $this->deleteFile(public_path($table->image));
+            $name = $request->name ?? $table->name;
             $file = $request->image;
-            $path = 'asset/category';
+            $path = 'asset/table';
             $details['image'] = $this->uploade_image($name, $path, $file);
           }
-        $product->update($details);
-        return $this->ReturnUpdate("Product",$product);
+        $table->update($details);
+        return $this->ReturnUpdate("Product",$table);
 
     }
 
@@ -82,12 +82,12 @@ class TableController extends Controller
         public function destroy(string $id)
     {
 
-          $product=  Product::find($id);
-          if (!$product){
-              return response()->json(['message' => 'Product not found'], 404)->setStatusCode(404);
+        $table=  Table::find($id);
+          if (!$table){
+              return response()->json(['message' => 'Table not found'], 404)->setStatusCode(404);
           }
-         $product->delete();
-            return response()->json(['message' => 'Product deleted successfully']);
+        $table->delete();
+            return response()->json(['message' => 'Table deleted successfully']);
     }
 
 }
