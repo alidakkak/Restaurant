@@ -10,8 +10,10 @@ use App\Http\Requests\UpdateCategoryRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Table;
 use App\Traits\AttachFilesTrait;
 use App\Traits\GeneralTrait;
+use http\Env\Response;
 use Illuminate\Http\Request;
 
 class TableController extends Controller
@@ -31,15 +33,21 @@ class TableController extends Controller
     public function store(ProductRequest $request)
     {
         $details=$request->validated();
-            if ($request->image)
-            {
-                $name = $request->name ?? $request->name_ar;
-                $file = $request->image;
-                $path = 'asset/product';
-                $details['image'] = $this->uploade_image($name, $path, $file);
-            }
-                $product = Product::create($details);
-                return $this->ReturnCreate("Product",$product);
+       $isExist = Table::where('table_num',$request->table_num)->exists();
+       if($isExist) {
+           return $this->returnError('error','The table number already exists');
+       }else{
+           if ($request->image)
+           {
+               $name = $request->name ?? $request->name_ar;
+               $file = $request->image;
+               $path = 'asset/product';
+               $details['image'] = $this->uploade_image($name, $path, $file);
+           }
+           $product = Product::create($details);
+           return $this->ReturnCreate("Product",$product);
+       }
+
     }
 
     /**
